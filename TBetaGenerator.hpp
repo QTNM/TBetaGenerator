@@ -29,8 +29,8 @@ namespace TBeta
   
   // PMNS first row squared mixing elements
   static constexpr double s12       = 0.297;
-  static constexpr double s13NO     = 0.297;
-  static constexpr double s13IO     = 0.297;
+  static constexpr double s13NO     = 0.0215;
+  static constexpr double s13IO     = 0.0216;
   static constexpr std::array<double,3> UeSqNO = {(1.0-s12)*(1-s13NO), s12*(1.0-s13NO), s13NO};
   static constexpr std::array<double,3> UeSqIO = {(1.0-s12)*(1-s13IO), s12*(1.0-s13IO), s13IO};
   
