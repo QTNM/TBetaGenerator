@@ -5,6 +5,7 @@
 // std libs
 #include <iostream>
 #include <random>
+#include <chrono>
 
 // us
 #include "TBetaGenerator.hpp"
@@ -59,5 +60,14 @@ int main() {
   std::cout<< "energy densities:" << std::endl;
   for (double val : ed.densities()) std::cout << val << " ";
   std::cout << std::endl;
+  std::cout << std::endl;
+
+  std::cout<< "draw 2 random numbers from the distribution:" << std::endl;
+  std::cout<< "These are electron energies in [keV]." << std::endl;
+  unsigned int seed = std::chrono::system_clock::now().time_since_epoch().count();
+  std::default_random_engine generator(seed);
+  std::cout << "First rnd=" << ed(generator) 
+	    << "; 2nd=" << ed(generator) << std::endl;
+
   return 0;
 }
