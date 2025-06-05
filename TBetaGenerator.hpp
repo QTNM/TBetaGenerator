@@ -8,17 +8,20 @@
 #include <complex>
 #include <functional>
 
+// references for value updates:
+// [C1] CODATA 2022: P.J. Mohr et al, Rev. Mod. Phys. 97 (2025) 025002
+// [C2] M.M. Restrepo and E.G. Myers, PRL 131 (2023) 243002
 namespace TBeta
 {
   static constexpr double pi        = std::acos(-1.0);    // Pi
   static constexpr double twopi     = 2.0 * pi;           // 2 Pi
-  static constexpr double me        = 510.99895;          // electron mass [keV]
+  static constexpr double me        = 510.99895069;       // [C1] electron mass [keV]
   static constexpr double gA        = 1.2646;             // nucleon axial coupling
   static constexpr double gAq       = 1.24983;            // quenched gA
   static constexpr double gV        = 1.0;                // nucleon vector coupling
-  static constexpr double MTr       = 2808920.8205;       // bare nuclear tritium mass [keV]
-  static constexpr double Mf        = 2808391.2193;       // bare nuclear 3He+ mass [keV]
-  static constexpr double alpha     = 7.2973525693e-3;    // fine structure constant
+  static constexpr double MTr       = 2808921.13668;      // [C1] bare nuclear tritium mass [keV]
+  static constexpr double Mf        = 2808391.61112;      // [C1] bare nuclear 3He+ mass [keV]
+  static constexpr double alpha     = 7.2973525643e-3;    // [C1] ine structure constant
   static constexpr double Gf        = 1.1663787e-17;      // Fermi interaction strength [keV^-2]
   static constexpr double Rn        = 2.884e-3;           // nuclear radius of 3He [me]
   static constexpr double keVInvSec = 1.52e18;            // conversion [keV s]
