@@ -53,7 +53,8 @@ int main() {
   
   pld_type ed(nw, lbound, ubound, betaGenerator(order, mnu, mN, eta));
 
-  std::cout << "endpoint energy mnu=0: " << TBeta::endAt(0.0,1) << std::endl;
+  std::cout << "endpoint energy mnu=0: " << TBeta::endpoint(0.0) << std::endl;
+  std::cout << "endAt energy mnu=0: " << TBeta::endAt(0.0,1) << std::endl;
   std::cout << "energy intervals:" << std::endl;
   for (double val : ed.intervals()) std::cout << val << " ";
   std::cout << std::endl;
