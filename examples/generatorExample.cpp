@@ -53,8 +53,10 @@ int main() {
   
   pld_type ed(nw, lbound, ubound, betaGenerator(order, mnu, mN, eta));
 
-  std::cout << "endpoint energy mnu=0: " << TBeta::endpoint(0.0) << std::endl;
-  std::cout << "endAt energy mnu=0: " << TBeta::endAt(0.0,1) << std::endl;
+  double qvalue = TBeta::endAt(0.0, 1);
+  std::cout << "endAt energy mnu=0: " << qvalue << std::endl;
+  std::cout << "compared to published 18.592071(22) keV; corrections: He-1s binding energy and He-3 recoil energy: " << std::endl;
+  std::cout << (18.592071-qvalue)*1000 << " eV" << std::endl;
   std::cout << "energy intervals:" << std::endl;
   for (double val : ed.intervals()) std::cout << val << " ";
   std::cout << std::endl;
