@@ -166,8 +166,8 @@ namespace TBeta
     double gamma = std::sqrt(1.0-(alpha*alpha*Z*Z));
     double fac1 = wb/w*std::pow(pb/p, -1.0+2.0*gamma);
     std::complex<double> arg1 (gamma, etab), arg2 (gamma, eta);
-    double d1 = Gamma(arg1);
-    double d2 = Gamma(arg2);
+    std::complex<double> d1 = Gamma(arg1);
+    std::complex<double> d2 = Gamma(arg2);
     double nom   = std::norm(d1 * d1);
     double denom = std::norm(d2 * d2);
     return fac1 * std::exp(pi*(etab-eta)) * nom/denom;
