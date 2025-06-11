@@ -42,6 +42,11 @@ namespace TBeta
   static constexpr double dm31Sq =  2.517e-9;
   static constexpr double dm32Sq = -2.498e-9;
   
+  // formula constants
+  static constexpr double emin = 0.2; // [keV] low-energy cut-off, avoiding atomic effects in S(Z,en)
+  static constexpr double v0   = 76.0e-3; // =76 eV in ref [1]
+  static constexpr double mcc  = Mf / me; // mass of He3 in units of me [1]
+
   //
   // function interfaces
   //
@@ -136,8 +141,7 @@ namespace TBeta
 
   // Radiative correction [1] (A.3)
   double G(double en, double endp) {
-    if (endp<=en) return 0.0;
-    if (en<0.04) en = 0.04; // avoid zero energy
+    if (endp<=en || en<emin) return 0.0;
     double w  = (en + me) / me; // total electron energy [me]
     double w0 = (endp + me) / me;
     double p  = std::sqrt(w*w - 1.0);
@@ -152,8 +156,7 @@ namespace TBeta
 
   // Orbital electron shielding [1] (A.4)
   double S(int Z, double en) {
-    if (en<0.04) en = 0.04; // check announced anomaly
-    static constexpr double v0 = 1.45*alpha*alpha * me; // =76 eV in ref [1]
+    if (en<emin) return 1.0; // check announced anomaly
     double w  = (en + me) / me; // total electron energy [me]
     double p  = std::sqrt(w*w - 1.0);
     double wb = w - v0 / me;
@@ -163,8 +166,10 @@ namespace TBeta
     double gamma = std::sqrt(1.0-(alpha*alpha*Z*Z));
     double fac1 = wb/w*std::pow(pb/p, -1.0+2.0*gamma);
     std::complex<double> arg1 (gamma, etab), arg2 (gamma, eta);
-    double nom   = std::norm(Gamma(arg1));
-    double denom = std::norm(Gamma(arg2));
+    double d1 = Gamma(arg1);
+    double d2 = Gamma(arg2);
+    double nom   = std::norm(d1 * d1);
+    double denom = std::norm(d2 * d2);
     return fac1 * std::exp(pi*(etab-eta)) * nom/denom;
   }
   
@@ -180,7 +185,7 @@ namespace TBeta
   
   // Convolution of electron and neutrino wavefunctions within nucleus [1] (A.8)
   double CC(int Z, double en, double endp) {
-    if (endp<=en) return 1.0;
+    if (endp<=en || en<emin) return 1.0;
     double w  = (en + me) / me; // total electron energy [me]
     double w0 = (endp + me) / me;
     double fac = alpha * Z;
@@ -193,10 +198,8 @@ namespace TBeta
 
     // Recoiling nuclear charge field [1] (A.9)
   double Q(int Z, double en, double endp) {
-    if (endp<=en) return 1.0;
-    if (en<0.04) en = 0.04; // avoid zero energy
-    static const double mcc = 5497.885;
-    static const double lt = 1.265;        
+    if (endp<=en || en<emin) return 1.0;
+    double lt = gA / gV;
     double w   = (en + me) / me; // total electron energy [me]
     double w0  = (endp + me) / me;
     double p   = std::sqrt(w*w - 1.0);
@@ -208,9 +211,9 @@ namespace TBeta
   // function of neutrino mass munu [keV], n atomic energy level
   // of daughter nucleus, en electron energy [kev]
   double Corr(double en, double munu, int n) {
-    double arg = std::sqrt((en+me)*(en+me)-me*me)/(en+me);
     double e0 = endAt(munu, n);
-    if (e0<=en) return 1.0; // no correction
+    if (e0<=en || en<emin) return 1.0; // no correction
+    double arg = std::sqrt((en+me)*(en+me)-me*me)/(en+me);
     return Fermi(2,arg)*S(2,en)*G(en,e0)*L(2,en)*CC(2,en,e0)*Q(2,en,e0);
   }
 
@@ -218,7 +221,7 @@ namespace TBeta
   // for the emission of an electron antineutrino with mass munu [kev] and 
   // the endpoint of the n-th 3He energy level. With corrections.
   double stub(double en, double munu, double e0) { // used twice, factor out
-    if (e0<en) return 0.0;
+    if (e0<en || en<emin) return 0.0;
     double fac1  = (Gf*Gf*Vud*Vud)/(2.0*pi*pi*pi);
     double denom = MTr*MTr - 2.0*MTr*(en+me) + me*me;
     double nom1  = MTr*(en+me) - me*me;
@@ -335,7 +338,7 @@ namespace TBeta
     // Contribution only from the continuum orbital electron states.
     // integrate over g.
     double gammaCont(double en, double munu) {
-        if (en > endCont(munu, 1e10)) return 0.0;
+        if (en > endCont(munu, 1e10) || en<emin) return 0.0;
         std::function<double(double,double,double)> fn = integrand;
         SimpsonIntegral sint(fn, en, munu);
         return sint.integrate(-99, etaL(en), 1000)/pi;
